@@ -1,108 +1,96 @@
-# `scrape-posh-previews.sh`
+scrape-posh-previews.sh 🕸️
 
-This is a simple Bash script designed to scrape the Oh My Posh documentation website for theme preview image URLs and save them to a local JSON file. This local file can then be used by other scripts (like the `select-posh-theme.sh` theme switcher) to provide faster access to theme previews without needing to fetch the website content every time.
+This is a simple Bash script designed to scrape the Oh My Posh documentation website for theme preview image URLs and save them to a local JSON file. This local file can then be used by other scripts (like the select-posh-theme.sh theme switcher) to provide faster access to theme previews without needing to fetch the website content every time.
+Features ✨
 
-## Features
+    Fetches the Oh My Posh themes documentation page.
 
-* Fetches the Oh My Posh themes documentation page.
+    Extracts image URLs that appear to be theme previews.
 
-* Extracts image URLs that appear to be theme previews.
+    Formats the extracted URLs into a JSON array.
 
-* Formats the extracted URLs into a JSON array.
+    Saves the JSON data to a local file.
 
-* Saves the JSON data to a local file.
-
-## Requirements
+Requirements 🛠️
 
 This script requires the following command-line tools to be installed on your system:
 
-* **`bash`**: The shell to execute the script (standard on most Linux systems).
+    bash: The shell to execute the script (standard on most Linux systems).
 
-* **`curl`**: Used to fetch the content of the Oh My Posh documentation page.
+    curl: Used to fetch the content of the Oh My Posh documentation page.
 
-  * Installation (Arch Linux): `sudo pacman -S curl`
+        Installation (Arch Linux):
 
-* **`grep`**: Used to extract the image URLs from the HTML content.
+        sudo pacman -S curl
 
-  * Installation (Arch Linux): `sudo pacman -S grep` (usually part of `coreutils`)
+    grep: Used to extract the image URLs from the HTML content.
 
-* **`sed`**: Used to process the extracted URLs and format the JSON.
+        Installation (Arch Linux):
 
-  * Installation (Arch Linux): `sudo pacman -S sed` (usually part of `coreutils`)
+        sudo pacman -S grep # usually part of coreutils
 
-* **`find`**: Used to list files (though not strictly necessary for the scraping logic itself, it's a common dependency in related scripts).
+    sed: Used to process the extracted URLs and format the JSON.
 
-  * Installation (Arch Linux): `sudo pacman -S find` (usually part of `findutils`)
+        Installation (Arch Linux):
 
-* **`mkdir`**: Used to create the output directory (usually part of `coreutils`).
+        sudo pacman -S sed # usually part of coreutils
 
-* **`dirname`**: Used to extract the directory path (usually part of `coreutils`).
+    find: Used to list files (though not strictly necessary for the scraping logic itself, it's a common dependency in related scripts).
 
-* **`echo`**: Used for output (usually part of `coreutils`).
+        Installation (Arch Linux):
 
-* **`wc`**: Used to count lines (usually part of `coreutils`).
+        sudo pacman -S find # usually part of findutils
 
-* **`sort`**: Used to sort and unique the URLs (usually part of `coreutils`).
+    Standard Utilities: mkdir, dirname, echo, wc, sort (these are usually part of the coreutils package and are standard on most Linux systems).
 
-## Installation
+Installation ⬇️
 
-1. **Save the script:** Copy the content of the `scrape-posh-previews.sh` script into a file named `scrape-posh-previews.sh`.
+    Save the script: Copy the content of the scrape-posh-previews.sh script into a file named scrape-posh-previews.sh.
 
-2. **Choose a location:** Save this file to a directory that is included in your system's `PATH` environment variable. A standard location for user-specific scripts is `~/.local/bin/`.
+    Choose a location: Save this file to a directory that is included in your system's PATH environment variable. A standard location for user-specific scripts is ~/.local/bin/.
 
-   ```
-   mkdir -p ~/.local/bin/
-   # Then save the script content to ~/.local/bin/scrape-posh-previews.sh
-   ```
+    mkdir -p ~/.local/bin/
+    # Then save the script content to ~/.local/bin/scrape-posh-previews.sh
 
-3. **Make it executable:** Give the script execute permissions.
+    Make it executable: Give the script execute permissions.
 
-   ```
-   chmod +x ~/.local/bin/scrape-posh-previews.sh
-   ```
+    chmod +x ~/.local/bin/scrape-posh-previews.sh
 
-4. **Verify PATH:** Ensure `~/.local/bin/` is in your `PATH`. You can check with `echo $PATH`. If it's not, add `fish_add_path ~/.local/bin` to your `~/.config/fish/config.fish` and restart your terminal.
+    Verify PATH: Ensure ~/.local/bin/ is in your PATH. You can check with echo $PATH. If it's not, add fish_add_path ~/.local/bin to your ~/.config/fish/config.fish and restart your terminal.
 
-## Usage
+Usage 🖱️
 
 To run the scraper script, simply open your terminal and execute it by name:
 
-```
 scrape-posh-previews.sh
-```
 
 The script will:
 
-1. Fetch the content from `https://ohmyposh.dev/docs/themes`.
+    Fetch the content from https://ohmyposh.dev/docs/themes.
 
-2. Extract image URLs containing `/assets/images/`.
+    Extract image URLs containing /assets/images/.
 
-3. Format these URLs into a JSON array.
+    Format these URLs into a JSON array.
 
-4. Save the JSON array to `~/.config/oh-my-posh/theme_previews.json`.
+    Save the JSON array to ~/.config/oh-my-posh/theme_previews.json.
 
 You should run this script periodically (e.g., weekly or monthly) to keep your local preview data up-to-date with any changes on the Oh My Posh website.
+Output File 💾
 
-## Output File
+The script creates or overwrites the file ~/.config/oh-my-posh/theme_previews.json. This file is a simple JSON array containing strings, where each string is a full URL to a Oh My Posh theme preview image.
 
-The script creates or overwrites the file `~/.config/oh-my-posh/theme_previews.json`. This file is a simple JSON array containing strings, where each string is a full URL to a Oh My Posh theme preview image.
+Example theme_previews.json content:
 
-Example `theme_previews.json` content:
-
-```json
 [
-  "https://ohmyposh.dev/assets/images/1_shell-abcdef12345.png",
-  "https://ohmyposh.dev/assets/images/another_theme-67890abcde.jpg",
-  // ... more URLs
+"https://ohmyposh.dev/assets/images/1_shell-abcdef12345.png",
+"https://ohmyposh.dev/assets/images/another_theme-67890abcde.jpg",
+// ... more URLs
 ]
-```
 
-## Integration with `select-posh-theme.sh`
+Integration with select-posh-theme.sh 🤝
 
-This `theme_previews.json` file is designed to be read by the `select-posh-theme.sh` script when you choose the "Browse Local Previews" option. The theme switcher script uses `jq` to parse this JSON file and present the URLs in a Rofi menu, allowing you to quickly view the theme previews without hitting the network each time.
+This theme_previews.json file is designed to be read by the select-posh-theme.sh script when you choose the "Browse Local Previews" option. The theme switcher script uses jq to parse this JSON file and present the URLs in a Rofi menu, allowing you to quickly view the theme previews without hitting the network each time.
 
-Make sure you have `jq` installed (`sudo pacman -S jq`) for the `select-posh-theme.sh` script to be able to read this file.
+Make sure you have jq installed (sudo pacman -S jq) for the select-posh-theme.sh script to be able to read this file.
 
----
-
-This README provides a comprehensive overview of the `scrape-posh-previews.sh` script.
+This README provides a comprehensive overview of the scrape-posh-previews.sh script.

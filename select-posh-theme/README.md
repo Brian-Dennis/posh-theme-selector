@@ -1,7 +1,7 @@
-select-posh-theme.sh
+select-posh-theme.sh ✨
 
 This Bash script provides a convenient way to manage and preview your Oh My Posh themes using Rofi. It allows you to quickly switch between your locally installed themes or browse image previews fetched from the Oh My Posh documentation website (via a separate scraper script). It uses the loupe image viewer to display previews and ex to modify your fish configuration.
-Features
+Features 🚀
 
     Displays a Rofi menu listing your installed Oh My Posh themes.
 
@@ -11,7 +11,7 @@ Features
 
     Offers an option to open the selected theme's section on the official Oh My Posh documentation website using xdg-open.
 
-Requirements
+Requirements 🛠️
 
 This script requires the following to be installed and configured on your system:
 
@@ -19,21 +19,29 @@ This script requires the following to be installed and configured on your system
 
     rofi: A window switcher, application launcher, and dmenu replacement.
 
-        Installation (Arch Linux): sudo pacman -S rofi
+        Installation (Arch Linux):
+
+        sudo pacman -S rofi
 
     jq: A lightweight and flexible command-line JSON processor (needed for browsing local previews).
 
-        Installation (Arch Linux): sudo pacman -S jq
+        Installation (Arch Linux):
+
+        sudo pacman -S jq
 
     loupe: The GNOME Image Viewer (used to display image previews from URLs). This is often pre-installed on systems using the GNOME desktop environment.
 
-        Installation (Arch Linux): sudo pacman -S loupe (if not already installed)
+        Installation (Arch Linux):
+
+        sudo pacman -S loupe # if not already installed
 
     ex: A standard line editor used non-interactively for file modification (usually part of vim or vi packages, standard on most Linux systems).
 
     xdg-open: A utility to open files or URLs in the user's preferred application (used for opening documentation links, usually part of xdg-utils).
 
-        Installation (Arch Linux): sudo pacman -S xdg-utils
+        Installation (Arch Linux):
+
+        sudo pacman -S xdg-utils
 
     Oh My Posh: The prompt theme engine itself.
 
@@ -45,7 +53,7 @@ This script requires the following to be installed and configured on your system
 
         Refer to the README for scrape-posh-previews.sh for details on this script.
 
-Installation
+Installation ⬇️
 
     Save the script: Copy the content of the select-posh-theme.sh script into a file named select-posh-theme.sh.
 
@@ -64,7 +72,7 @@ Installation
 
     Verify PATH: Ensure YOUR_SCRIPT_DIR is in your PATH. You can check with echo $PATH. If it's not, add the directory to your PATH in your shell configuration file (e.g., add fish_add_path YOUR_SCRIPT_DIR to your ~/.config/fish/config.fish for fish shell) and restart your terminal.
 
-Usage
+Usage 🖱️
 
 To run the theme switcher script, simply open your terminal and execute it by name:
 
@@ -83,7 +91,7 @@ Applying a Theme:
 If you select a theme and choose "Apply Theme", the script will modify your ~/.config/fish/config.fish file using the ex command to update the oh-my-posh init fish --config ... | source line to point to the selected theme file.
 
 Note: For the theme change to take effect, you must open a new terminal session or manually source ~/.config/fish/config.fish in your current terminal.
-Integration
+Integration 🤝
 
 This script works in conjunction with the scrape-posh-previews.sh script. The scraper script is responsible for fetching and maintaining the local theme_previews.json file that this switcher script reads from for the "Browse Local Previews" feature.
 
