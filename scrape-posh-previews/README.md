@@ -1,7 +1,8 @@
 scrape-posh-previews.sh 🕸️
+Description ✨
 
 This is a simple Bash script designed to scrape the Oh My Posh documentation website for theme preview image URLs and save them to a local JSON file. This local file can then be used by other scripts (like the select-posh-theme.sh theme switcher) to provide faster access to theme previews without needing to fetch the website content every time.
-Features ✨
+Features 🚀
 
     Fetches the Oh My Posh themes documentation page.
 
@@ -82,9 +83,9 @@ The script creates or overwrites the file ~/.config/oh-my-posh/theme_previews.js
 Example theme_previews.json content:
 
 [
-"https://ohmyposh.dev/assets/images/1_shell-abcdef12345.png",
-"https://ohmyposh.dev/assets/images/another_theme-67890abcde.jpg",
-// ... more URLs
+  "https://ohmyposh.dev/assets/images/1_shell-abcdef12345.png",
+  "https://ohmyposh.dev/assets/images/another_theme-67890abcde.jpg",
+  // ... more URLs
 ]
 
 Integration with select-posh-theme.sh 🤝
@@ -92,5 +93,3 @@ Integration with select-posh-theme.sh 🤝
 This theme_previews.json file is designed to be read by the select-posh-theme.sh script when you choose the "Browse Local Previews" option. The theme switcher script uses jq to parse this JSON file and present the URLs in a Rofi menu, allowing you to quickly view the theme previews without hitting the network each time.
 
 Make sure you have jq installed (sudo pacman -S jq) for the select-posh-theme.sh script to be able to read this file.
-
-This README provides a comprehensive overview of the scrape-posh-previews.sh script.
