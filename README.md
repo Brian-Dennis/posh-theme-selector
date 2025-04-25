@@ -1,50 +1,49 @@
-Oh My Posh Theme Selector and Scraper 🚀
-Description ✨
+# posh-theme-selector ✨
 
-This repository contains two related Bash scripts designed to enhance your experience with Oh My Posh, a custom prompt engine for your shell.
+This repository contains scripts for managing Oh My Posh themes and handling random wallpapers in a Hyprland environment. It includes a Rofi-based theme switcher and a script to scrape theme preview images.
 
-    The select-posh-theme.sh script provides a convenient way to switch between your installed Oh My Posh themes using a Rofi menu.
+## Repository Structure 📂
 
-    The scrape-posh-previews.sh script helps you generate a local file containing theme preview image URLs from the official Oh My Posh documentation, which can be used by the theme switcher for quick visual browsing.
+* `select-posh-theme/`: Contains the `select-posh-theme.sh` script and its README.
 
-Project Structure 📂
+* `scrape-posh-previews/`: Contains the `scrape-posh-previews.sh` script and its README.
 
-    select-posh-theme/
+* `wallpaper-changer/`: Contains the `WallpaperAutoChange.sh` script.
 
-        select-posh-theme.sh: The main theme switcher script.
+* `README.md`: This file, providing an overview of the repository.
 
-        README.md: Documentation for the theme switcher script.
+## Scripts 📜
 
-    scrape-posh-previews/
+* **`select-posh-theme/select-posh-theme.sh`**: A Rofi-based script to select and apply Oh My Posh themes and browse previews.
 
-        scrape-posh-previews.sh: The script to scrape theme preview image URLs.
+  * [README for select-posh-theme.sh](./select-posh-theme/README.md)
 
-        README.md: Documentation for the scraper script.
+* **`scrape-posh-previews/scrape-posh-previews.sh`**: A script to scrape Oh My Posh theme preview image URLs.
 
-Getting Started ⬇️
+  * [README for scrape-posh-previews.sh](./scrape-posh-previews/README.md)
 
-    Clone this repository:
+* **`wallpaper-changer/WallpaperAutoChange.sh`**: A script to set random wallpapers using `swww`.
 
-    git clone https://github.com/Brian-Dennis/posh-theme-selector.git
+## Installation and Usage ⬇️🖱️
 
-    Navigate into the cloned directory:
+Refer to the individual README files in the respective subdirectories for detailed installation instructions and usage guides for each script.
 
-    cd posh-theme-selector
+**General Steps:**
 
-    Refer to the individual READMEs for detailed instructions on installing and using each script:
+1. Clone this repository to your desired location (e.g., `~/posh-theme-selector`).
 
-        README for select-posh-theme.sh
+2. Ensure the scripts have execute permissions (`chmod +x path/to/script.sh`).
 
-        README for scrape-posh-previews.sh
+3. Place the scripts in a directory that is in your system's `PATH` (e.g., `~/.local/bin/` or keep them in the repository and add the repository's script directories to your PATH).
 
-Usage 🖱️
+4. Update your Hyprland configuration (`~/.config/hypr/UserConfigs/Startup_Apps.conf`) to execute `wallpaper-changer/WallpaperAutoChange.sh` on startup, passing your wallpaper directory as an argument.
 
-Once installed, you can use the scripts from your terminal. See the individual READMEs for specific usage instructions.
-Requirements 🛠️
+5. Ensure all required dependencies (`rofi`, `jq`, `loupe`, `swww`, `wallust`, `xdg-open`, etc.) are installed.
 
-Each script has its own set of requirements (like rofi, jq, curl, etc.). Please check the individual README files for the specific dependencies for each script.
-Contributing 👋
+## Contributing 🤝
 
-If you have suggestions for improvements or find issues, feel free to open an issue or submit a pull request on GitHub.
+If you'd like to contribute to these scripts, feel free to fork the repository and submit pull requests.
 
-This is the main README for the Oh My Posh Theme Selector and Scraper repository.
+---
+
+This README provides an overview of the `posh-theme-selector` repository.
