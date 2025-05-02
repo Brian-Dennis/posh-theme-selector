@@ -105,8 +105,7 @@ case "$selected_item" in
 
   echo "Reading image URLs from local file: $PREVIEWS_JSON_FILE..."
   # Read image URLs from the local JSON file using jq
-  # jq -r '.[]' extracts each element from the JSON array as a raw string
-  image_urls=$(jq -r '.[]' "$PREVIEWS_JSON_FILE")
+  image_urls=$(jq -r '.[]' "$PREVIEWS_JSON_FILE" | sed "s|^|$OHMYPOSH_BASE_URL|") # Prepending the base URL
 
   # Check if any image URLs were found in the file
   if [ -z "$image_urls" ]; then
@@ -118,13 +117,10 @@ case "$selected_item" in
   # --- Prepare list for Rofi with theme names and URLs ---
   rofi_preview_list=""
   while IFS= read -r url; do
-    # Remove trailing double quote if present (from scraper bug)
+    # Clean the URL by removing trailing quotes if any
     cleaned_url="${url%\"}"
-    # Extract filename from URL
     filename=$(basename "$cleaned_url")
-    # Remove hash and extension to get a cleaner theme name
-    theme_name=$(echo "$filename" | sed -E 's/-[0-9a-f]{32}\.(png|jpg)$//' | sed 's/\.minimal$//') # Remove hash and extension, and .minimal suffix
-    # Format for Rofi: "Theme Name --- URL"
+    theme_name=$(echo "$filename" | sed -E 's/-[0-9a-f]{32}\.(png|jpg)$//' | sed 's/\.minimal$//')
     rofi_preview_list+="${theme_name} --- ${cleaned_url}\n"
   done <<<"$image_urls"
 
@@ -134,39 +130,42 @@ case "$selected_item" in
   # Use Rofi to display the list of theme names
   selected_line=$(echo -e "$rofi_preview_list" | rofi -dmenu -p "Select Image Preview:")
 
-  # Check if a line was selected from Rofi
   if [ -z "$selected_line" ]; then
     echo "No image preview selected from Rofi. User likely cancelled or Rofi returned empty."
-    exit 0 # Exit gracefully if no selection was made
+    exit 0
   fi
 
   # --- Extract URL from the selected line ---
-  # Split the selected line by " --- " and take the second part (the URL)
   selected_image_url=$(echo "$selected_line" | awk -F ' --- ' '{print $2}')
-  # --- End Extraction ---
 
-  # Open the selected image URL using loupe
-  echo "Opening image with loupe: $selected_image_url"
-  loupe "$selected_image_url" & # Use '&' to run loupe in the background so Rofi closes
+  # --- Download the Image ---
+  temp_image="/tmp/posh_image_preview.png"
+  echo "Downloading image to temporary file: $temp_image"
+  curl -s -o "$temp_image" "$selected_image_url"
+
+  # Check if the image download was successful
+  if [ ! -f "$temp_image" ]; then
+    echo "Error: Failed to download the image. Please check the URL and try again."
+    exit 1
+  fi
+
+  # Open the downloaded image with loupe
+  echo "Opening downloaded image with loupe: $temp_image"
+  loupe "$temp_image" & # Use '&' to run loupe in the background so Rofi closes
 
   ;;
 "Generate Local Previews (Run Scraper)")
   # --- Run Scraper Mode ---
   echo "Running the scraper script to generate local previews..."
-  # Execute the scraper script
-  # Assuming scrape-posh-previews.sh is in your PATH
   scrape-posh-previews.sh
-  # Inform the user to run the theme switcher script again after scraping
   echo "Please run the theme switcher script again to browse local previews."
   ;;
 *)
   # --- Theme Selection Mode ---
   # The selected item is a theme name
 
-  # Offer the user a choice: Apply theme or Show documentation section
   options="Apply Theme\nShow Documentation Section"
 
-  # Only show Show Documentation option if xdg-open is available
   if [ "$XDG_OPEN_AVAILABLE" = false ]; then
     options="Apply Theme"
   fi
@@ -174,13 +173,12 @@ case "$selected_item" in
   selected_action=$(echo -e "$options" | rofi -dmenu -p "Action for '$selected_item':")
 
   # --- Perform Action for Theme ---
-
   case "$selected_action" in
   "Apply Theme")
     # Construct the full absolute path to the selected theme file
     selected_theme_path="$THEMES_DIR/${selected_item}.omp.json"
 
-    # Check if the selected theme file actually exists (safety check)
+    # Check if the selected theme file exists
     if [ ! -f "$selected_theme_path" ]; then
       echo "Error: Selected theme file not found: $selected_theme_path"
       exit 1
@@ -188,48 +186,24 @@ case "$selected_item" in
 
     echo "Updating Oh My Posh theme in $FISH_CONFIG using ex..."
 
-    # Use ex to find the line containing 'oh-my-posh init fish' and replace it.
-    # This is generally more robust than sed for in-place replacement across systems.
-    # The here-document feeds commands to ex:
-    # /oh-my-posh init fish/  - Find the first line matching this pattern
-    # c                       - Change the current line
-    # oh-my-posh init fish --config ... | source - The new line content
-    # .                       - End the change command
-    # x                       - Save and exit
+    # Use ex to update the Fish config with the selected theme
     ex -s "$FISH_CONFIG" <<EOF
-/oh-my-posh init fish/c
-oh-my-posh init fish --config $selected_theme_path | source
+/oh-my-posh init fish/
+c
+oh-my-posh init fish --config "$selected_theme_path" | source
 .
 x
 EOF
-
-    # Check if ex was successful
-    if [ $? -ne 0 ]; then
-      echo "Error: Failed to update $FISH_CONFIG using ex."
-      echo "Please ensure that the line 'oh-my-posh init fish' exists in your fish configuration."
-      exit 1
-    fi
-
-    # Inform the user that the change has been made
-    echo "Oh My Posh theme updated to: $selected_item"
-    echo "Please open a new terminal session (or source your config.fish) for the changes to take effect."
     ;;
   "Show Documentation Section")
-    # Construct the URL for the theme page section.
-    # Theme names often match the section IDs on the docs page, but might need
-    # lowercasing and hyphens instead of spaces. This is a basic conversion.
-    theme_url_name=$(echo "$selected_item" | tr '[:upper:]' '[:lower:]' | sed 's/ /-/g')
-    preview_url="${OHMYPOSH_THEMES_URL}#${theme_url_name}"
-
-    echo "Opening documentation section for '$selected_item' in browser: $preview_url"
-    xdg-open "$preview_url"
+    # Open the theme documentation section in the web browser
+    echo "Opening documentation for the selected theme..."
+    xdg-open "$OHMYPOSH_THEMES_URL#$selected_item" &
     ;;
   *)
-    # User cancelled the action selection
-    echo "No action selected. Exiting."
+    echo "Invalid option selected. Exiting."
+    exit 1
     ;;
   esac
-  ;; # End of Theme Selection Mode case
-esac # End of main case statement
-
-exit 0
+  ;;
+esac
